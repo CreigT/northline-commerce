@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Operator desk · Northline Goods</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <header class="topbar" data-header></header>
+  <main class="wrap">
+    <section>
+      <div class="kicker">Approval desk</div>
+      <h1>Say yes, or send it back.</h1>
+      <p class="lede">Agents already did the research. They stop here when the decision spends money or signs a promise.</p>
+    </section>
+    <section class="lock" data-need="operator">
+      <strong>Operator paywall.</strong>
+      <p>This desk is $39 a month. Members can see their own orders. They cannot approve shop-wide money.</p>
+      <a class="btn" href="/pricing">Open the paywall</a>
+    </section>
+    <section data-show="operator">
+      <div class="grid-2">
+        <article class="card">
+          <h3>Agents on shift</h3>
+          <div id="agents" class="muted">Loading status…</div>
+        </article>
+        <article class="card">
+          <h3>Waiting for a person</h3>
+          <div id="approvals"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+  <footer data-footer></footer>
+  <script src="/js/site.js"></script>
+  <script>
+    Northline.boot("desk").then(async () => {
+      if (!Northline.can("operator")) return;
+      const res = await fetch("/api/status");
+      const data = await res.json();
+      document.getElementById("agents").innerHTML = data.agents.map((agent) => {
+        const klass = agent.state === "waiting" ? "wait" : "status-dot";
+        return `<p><span class="status-dot ${klass}"></span><strong>${agent.name}</strong> · ${agent.state}. ${agent.note}</p>`;
+      }).join("");
+      document.getElementById("approvals").innerHTML = data.approvals.map((item) => `
+        <article style="margin-bottom:16px">
+          <strong>${item.title}</strong>
+          <p class="muted">${item.detail}</p>
+          <p class="small">Impact: ${item.impact}</p>
+          <button class="btn" data-yes="${item.id}">Approve</button>
+          <button class="btn secondary" data-no="${item.id}">Send back</button>
+          <p class="small muted" id="log-${item.id}"></p>
+        </article>
+      `).join("");
+      document.getElementById("approvals").addEventListener("click", (event) => {
+        const yes = event.target.getAttribute("data-yes");
+        const no = event.target.getAttribute("data-no");
+        const id = yes || no;
+        if (!id) return;
+        document.getElementById("log-" + id).textContent = (yes ? "Approved" : "Sent back") + " at " + new Date().toLocaleString() + ". Audit row queued.";
+      });
+    });
+  </script>
+</body>
+</html>

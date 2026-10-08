@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paywall · Northline Goods</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <header class="topbar" data-header></header>
+  <main class="wrap">
+    <section>
+      <div class="kicker">Reasonable paywall</div>
+      <h1>Pay for access, not for confusion.</h1>
+      <p class="lede">Two paid doors. Clear prices. If you have not pasted a Stripe link yet, the button marks a demo pass in this browser so you can walk the pages.</p>
+    </section>
+    <section class="grid-3" id="plans"></section>
+    <section class="notice">
+      Stripe success URLs should return people to <code>/account?paid=member</code> or <code>/desk?paid=operator</code>.
+      A real charge is confirmed later by the Stripe webhook. This page never sees card numbers.
+    </section>
+  </main>
+  <footer data-footer></footer>
+  <script src="/js/site.js"></script>
+  <script>
+    Northline.boot("pricing").then((config) => {
+      const plans = [
+        { name: "Browse", price: "0", unit: "", points: ["Catalog", "How the shop works", "No account"], tier: "free", link: "" },
+        { name: "Member", price: config.memberPrice, unit: "/month", points: ["Checkout trail", "Order notes", "Refunds under $50"], tier: "member", link: config.memberLink },
+        { name: "Operator", price: config.operatorPrice, unit: "/month", points: ["Approval desk", "Refunds over $50", "Contract yes / no"], tier: "operator", link: config.operatorLink }
+      ];
+      document.getElementById("plans").innerHTML = plans.map((plan) => `
+        <article class="card">
+          <div class="tag">${plan.name}</div>
+          <div class="price">$${plan.price}<span class="small muted">${plan.unit}</span></div>
+          <ul>${plan.points.map((p) => `<li>${p}</li>`).join("")}</ul>
+          ${plan.tier === "free"
+            ? `<a class="btn secondary" href="/shop">Stay on free</a>`
+            : `<button class="btn green" data-plan="${plan.tier}">${plan.link ? "Pay with Stripe" : "Use demo pass"}</button>`}
+        </article>
+      `).join("");
+      document.querySelectorAll("[data-plan]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const plan = btn.getAttribute("data-plan");
+          Northline.pay(plan === "member" ? config.memberLink : config.operatorLink, plan);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

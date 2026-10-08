@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Owner override · Northline Goods</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <header class="topbar" data-header></header>
+  <main class="wrap">
+    <section>
+      <div class="kicker">Emergency only</div>
+      <h1>Stop the shop.</h1>
+      <p class="lede">This is not a paid plan. It is the legal owner’s brake. The key lives in Vercel as OWNER_OVERRIDE_KEY. The page never stores it.</p>
+    </section>
+    <section class="grid-2">
+      <form class="card" id="override-form">
+        <label for="key">Override key</label>
+        <input id="key" name="key" type="password" autocomplete="off" required>
+        <label for="action">Action</label>
+        <select id="action" name="action">
+          <option value="pause-selling">Pause selling</option>
+          <option value="resume-selling">Resume selling</option>
+          <option value="freeze-refunds">Freeze refunds</option>
+          <option value="release-refunds">Release refunds</option>
+          <option value="pause-ads">Pause ads</option>
+        </select>
+        <label for="reason">Why</label>
+        <textarea id="reason" name="reason" rows="3" placeholder="Short reason for the audit log"></textarea>
+        <div class="actions"><button class="btn" type="submit">Send override</button></div>
+      </form>
+      <article class="card">
+        <h3>What this does not do</h3>
+        <p class="muted">It does not edit products, change Stripe, or delete the books. Those stay in variables and agent modules. This page only pauses or releases a listed action.</p>
+        <p class="notice" id="result">Waiting for a key check.</p>
+      </article>
+    </section>
+  </main>
+  <footer data-footer></footer>
+  <script src="/js/site.js"></script>
+  <script>
+    Northline.boot("override");
+    document.getElementById("override-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const result = document.getElementById("result");
+      result.textContent = "Checking key…";
+      const payload = {
+        key: document.getElementById("key").value,
+        action: document.getElementById("action").value,
+        reason: document.getElementById("reason").value
+      };
+      const res = await fetch("/api/override", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      result.textContent = data.ok
+        ? "Accepted: " + data.action + " at " + data.at
+        : (data.error || "Override failed.");
+      document.getElementById("key").value = "";
+    });
+  </script>
+</body>
+</html>

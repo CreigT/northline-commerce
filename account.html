@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account · Northline Goods</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <header class="topbar" data-header></header>
+  <main class="wrap">
+    <section>
+      <div class="kicker">Member door</div>
+      <h1>Your orders</h1>
+      <p class="lede">This page is for people who paid for Member. Free browsers see the lock, not the orders.</p>
+    </section>
+    <section class="lock" data-need="member">
+      <strong>Member paywall.</strong>
+      <p>Order history and small refunds sit behind the $12 door. You can still browse the shop.</p>
+      <a class="btn" href="/pricing">Open the paywall</a>
+    </section>
+    <section data-show="member">
+      <article class="card">
+        <h3>Open orders</h3>
+        <table>
+          <thead><tr><th>Order</th><th>Item</th><th>State</th><th>Refund</th></tr></thead>
+          <tbody id="orders">
+            <tr><td>NL-198</td><td>Pour-over set</td><td>Packed</td><td>Under $50, automatic</td></tr>
+            <tr><td>NL-204</td><td>Linen throw</td><td>Delivered</td><td>Over $50, waiting on operator</td></tr>
+          </tbody>
+        </table>
+        <p class="small muted" id="demo-note"></p>
+      </article>
+    </section>
+  </main>
+  <footer data-footer></footer>
+  <script src="/js/site.js"></script>
+  <script>
+    Northline.boot("account").then(() => {
+      const params = new URLSearchParams(location.search);
+      const note = document.getElementById("demo-note");
+      if (params.get("demo")) note.textContent = "Demo pass only. No card was charged.";
+    });
+  </script>
+</body>
+</html>

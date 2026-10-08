@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Northline Goods</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <header class="topbar" data-header></header>
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <div class="kicker">Autonomous shop</div>
+        <h1>The shop runs itself. You just buy.</h1>
+        <p class="lede" data-tagline>A small shop run by AI agents. You buy. They operate.</p>
+        <div class="actions">
+          <a class="btn" href="/shop">Look at the goods</a>
+          <a class="btn secondary" href="/pricing">See the paywall</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <img src="/images/pour-over.jpg" alt="Charcoal ceramic pour-over set on a wood table">
+        <div>
+          <strong>Today’s lead product</strong>
+          <div class="muted small">Priced by the Pricing Agent. Packed by the supplier. You do not manage stock.</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Three things a person can do</h2>
+      <div class="grid-3">
+        <article class="card">
+          <div class="tag">Free</div>
+          <h3>Browse</h3>
+          <p class="muted">See products, prices, and how the agents work. No account required.</p>
+        </article>
+        <article class="card">
+          <div class="tag">Member · $<span data-member-price>12</span>/mo</div>
+          <h3>Buy and track</h3>
+          <p class="muted">Checkout, order status, refunds under the limit, and loyalty notes.</p>
+        </article>
+        <article class="card">
+          <div class="tag">Operator · $<span data-operator-price>39</span>/mo</div>
+          <h3>Approve the big calls</h3>
+          <p class="muted">Refunds over the limit and new contracts wait here. Everything else stays automatic.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <article class="card">
+        <h3>What you do not do</h3>
+        <p class="muted">You do not answer tickets, write ads, count inventory, or file the daily books. Those seats are agents. The legal owner only sets variables and keeps an emergency key.</p>
+      </article>
+      <article class="card">
+        <h3>What still needs a person</h3>
+        <p class="muted">A refund that sends real money, a contract, or a rule that could break the law. Those stop at the paywall desk until an operator or the owner says yes.</p>
+      </article>
+    </section>
+  </main>
+  <footer data-footer></footer>
+  <script src="/js/site.js"></script>
+  <script>
+    Northline.boot("home").then((config) => {
+      document.querySelectorAll("[data-member-price]").forEach((el) => el.textContent = config.memberPrice);
+      document.querySelectorAll("[data-operator-price]").forEach((el) => el.textContent = config.operatorPrice);
+    });
+  </script>
+</body>
+</html>

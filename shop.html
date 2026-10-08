@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shop · Northline Goods</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <header class="topbar" data-header></header>
+  <main class="wrap">
+    <section>
+      <div class="kicker">Catalog</div>
+      <h1>Goods on the floor</h1>
+      <p class="lede">Prices come from your variables. Checkout goes to the Stripe link you paste. If a link is empty, the button runs a demo and does not charge anyone.</p>
+    </section>
+    <section class="grid-3" id="catalog"></section>
+  </main>
+  <footer data-footer></footer>
+  <script src="/js/site.js"></script>
+  <script>
+    Northline.boot("shop").then((config) => {
+      const root = document.getElementById("catalog");
+      root.innerHTML = config.products.map((item) => `
+        <article class="card">
+          <img src="${item.image}" alt="${item.name}">
+          <div class="tag">${item.sku}</div>
+          <h3>${item.name}</h3>
+          <p class="muted">${item.blurb}</p>
+          <div class="price">$${item.price}</div>
+          <div class="actions">
+            <button class="btn" data-buy="${item.sku}">Buy</button>
+          </div>
+          <p class="small muted">${item.link ? "Opens Stripe." : "No payment link yet. Demo only."}</p>
+        </article>
+      `).join("");
+      root.querySelectorAll("[data-buy]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const item = config.products.find((p) => p.sku === btn.getAttribute("data-buy"));
+          if (item && item.link) location.href = item.link;
+          else location.href = "/account?demo=order&sku=" + encodeURIComponent(item.sku);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
