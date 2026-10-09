@@ -73,7 +73,7 @@ window.Northline = (function () {
           <a href="/pricing" ${current === "pricing" ? 'aria-current="page"' : ""}>Paywall</a>
           <a href="/account" ${current === "account" ? 'aria-current="page"' : ""}>Account</a>
           <a href="/desk" ${current === "desk" ? 'aria-current="page"' : ""}>Operator desk</a>
-          <a href="/override" ${current === "override" ? 'aria-current="page"' : ""}>Owner override</a>
+          <a href="/setup" ${current === "setup" ? 'aria-current="page"' : ""}>Setup</a>
           <span class="tier-pill">Access: <span data-tier-label>${tierLabel(tier())}</span></span>
         </nav>
       </div>`;
@@ -107,6 +107,13 @@ window.Northline = (function () {
     nav(current);
     footer();
     const params = new URLSearchParams(location.search);
+    try {
+      const me = await fetch("/api/me", { cache: "no-store" });
+      if (me.ok) {
+        const access = await me.json();
+        if (access.tier && access.tier !== "free") setTier(access.tier);
+      }
+    } catch (err) {}
     if (params.get("paid") === "member" || params.get("paid") === "operator") {
       setTier(params.get("paid"));
     }
@@ -116,13 +123,18 @@ window.Northline = (function () {
     return config;
   }
 
-  function pay(link, fallbackTier) {
-    if (link) {
-      location.href = link;
+  async function pay(kind, sku) {
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kind, sku })
+    });
+    const data = await res.json();
+    if (data.url) {
+      location.href = data.url;
       return;
     }
-    setTier(fallbackTier);
-    location.href = "/account?demo=1";
+    location.href = data.setup || "/setup";
   }
 
   return { boot, tier, setTier, can, pay, paintTier };

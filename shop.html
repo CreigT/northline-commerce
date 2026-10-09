@@ -35,11 +35,7 @@
         </article>
       `).join("");
       root.querySelectorAll("[data-buy]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const item = config.products.find((p) => p.sku === btn.getAttribute("data-buy"));
-          if (item && item.link) location.href = item.link;
-          else location.href = "/account?demo=order&sku=" + encodeURIComponent(item.sku);
-        });
+        btn.addEventListener("click", () => Northline.pay("product", btn.getAttribute("data-buy")));
       });
     });
   </script>

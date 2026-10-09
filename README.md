@@ -1,51 +1,37 @@
 # Northline Goods
 
-Public storefront and paywall for an autonomous AI commerce company.
+Public shop and paywall. You change variables in Vercel. You do not edit HTML.
 
-People browse a normal shop. Members track orders. Operators approve money and contracts. The legal owner only sets variables and holds an emergency key.
+## Make it charge cards
 
-## Your only job
+1. Import this repo in Vercel. Framework: Other. No build command.
+2. Deploy once.
+3. Open `/setup` on the live site.
+4. Add one of these in Vercel → Settings → Environment Variables, then redeploy.
 
-1. Push this folder to GitHub.
-2. Import the repo in Vercel.
-3. Paste variables from `.env.example`.
-4. Redeploy.
+Fast path: `STRIPE_SECRET_KEY`
 
-Do not edit the HTML to change the shop name, prices, or Stripe links.
+- Stripe Dashboard → turn on Test mode
+- Developers → API keys
+- Copy the Secret key (`sk_test_...`)
+- Buy on `/shop` then opens Stripe Checkout
+
+Click path: payment links
+
+- Product catalog → Add product → set price → Save
+- Payment links → New → copy `https://buy.stripe.com/...`
+- Paste into `PRODUCT_1_LINK`, `PRODUCT_2_LINK`, `PRODUCT_3_LINK`, `STRIPE_MEMBER_LINK`, `STRIPE_OPERATOR_LINK`
+
+Also set `OWNER_OVERRIDE_KEY` before using `/override`.
 
 ## Pages
 
-- `/` landing page
-- `/shop` catalog
-- `/how` plain-language roles
-- `/pricing` paywall
+- `/` shop story
+- `/shop` buy
+- `/pricing` member and operator
+- `/setup` what is still missing
 - `/account` member orders
 - `/desk` operator approvals
-- `/override` owner emergency brake
+- `/override` owner brake
 
-## Stripe
-
-Create Payment Links in Stripe. Paste them into:
-
-- `STRIPE_MEMBER_LINK`
-- `STRIPE_OPERATOR_LINK`
-- `PRODUCT_1_LINK`, `PRODUCT_2_LINK`, `PRODUCT_3_LINK`
-
-Set each link’s success URL to:
-
-- Member: `https://YOUR-DOMAIN/account?paid=member`
-- Operator: `https://YOUR-DOMAIN/desk?paid=operator`
-
-Card numbers never touch this app.
-
-## Owner key
-
-Set `OWNER_OVERRIDE_KEY` in Vercel only. The override page checks it on the server.
-
-## Local preview
-
-Open `index.html` in a browser for the free pages. API routes need Vercel.
-
-```bash
-npx vercel dev
-```
+Card numbers stay on Stripe. A paid Checkout return sets a 30-day access cookie.

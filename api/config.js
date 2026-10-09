@@ -1,6 +1,7 @@
 const { productsFromEnv } = require("./products");
 
 module.exports = function handler(req, res) {
+  const products = productsFromEnv();
   res.setHeader("Cache-Control", "no-store");
   res.status(200).json({
     storeName: process.env.STORE_NAME || "Northline Goods",
@@ -12,6 +13,8 @@ module.exports = function handler(req, res) {
     operatorPrice: process.env.OPERATOR_PRICE || "39",
     memberLink: process.env.STRIPE_MEMBER_LINK || "",
     operatorLink: process.env.STRIPE_OPERATOR_LINK || "",
-    products: productsFromEnv()
+    paymentsReady: Boolean(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_MEMBER_LINK),
+    checkoutReady: Boolean(process.env.STRIPE_SECRET_KEY),
+    products
   });
 };

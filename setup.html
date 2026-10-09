@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Setup · Northline Goods</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <header class="topbar" data-header></header>
+  <main class="wrap">
+    <section>
+      <div class="kicker">Make checkout real</div>
+      <h1>Where the Stripe links come from</h1>
+      <p class="lede">You do not invent a link. Stripe gives it to you. The faster path is one secret key. The click path is a payment link per product.</p>
+    </section>
+    <section class="grid-2">
+      <article class="card">
+        <div class="tag">Fast path</div>
+        <h3>One secret key</h3>
+        <p class="muted">The shop creates the Stripe checkout itself. You do not make a payment link for each item.</p>
+        <ol>
+          <li>Open dashboard.stripe.com and turn on Test mode.</li>
+          <li>Developers → API keys.</li>
+          <li>Copy the Secret key. It starts with sk_test_.</li>
+          <li>In Vercel, add STRIPE_SECRET_KEY and redeploy.</li>
+        </ol>
+      </article>
+      <article class="card">
+        <div class="tag">Click path</div>
+        <h3>Payment links</h3>
+        <p class="muted">Use this if you do not want a secret key in Vercel.</p>
+        <ol>
+          <li>Stripe Dashboard → Product catalog → Add product.</li>
+          <li>Set the name and price, then save.</li>
+          <li>Open the product → Payment links → New, or Payment links in the left menu.</li>
+          <li>Copy the URL. It looks like https://buy.stripe.com/test_...</li>
+          <li>Paste it into PRODUCT_1_LINK, PRODUCT_2_LINK, PRODUCT_3_LINK, STRIPE_MEMBER_LINK, or STRIPE_OPERATOR_LINK.</li>
+        </ol>
+      </article>
+    </section>
+    <section class="notice" id="ready">Checking whether payments are connected…</section>
+  </main>
+  <footer data-footer></footer>
+  <script src="/js/site.js"></script>
+  <script>
+    Northline.boot("setup").then((config) => {
+      const ready = document.getElementById("ready");
+      if (config.checkoutReady) ready.textContent = "Checkout is connected. Buy on the shop page opens Stripe.";
+      else if (config.paymentsReady) ready.textContent = "A payment link is set. Product links still need to be pasted if Buy should charge.";
+      else ready.textContent = "Not connected yet. Add STRIPE_SECRET_KEY, or paste payment links, then redeploy.";
+    });
+  </script>
+</body>
+</html>

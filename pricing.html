@@ -36,13 +36,13 @@
           <ul>${plan.points.map((p) => `<li>${p}</li>`).join("")}</ul>
           ${plan.tier === "free"
             ? `<a class="btn secondary" href="/shop">Stay on free</a>`
-            : `<button class="btn green" data-plan="${plan.tier}">${plan.link ? "Pay with Stripe" : "Use demo pass"}</button>`}
+            : `<button class="btn green" data-plan="${plan.tier}">Pay with Stripe</button>`}
         </article>
       `).join("");
       document.querySelectorAll("[data-plan]").forEach((btn) => {
         btn.addEventListener("click", () => {
           const plan = btn.getAttribute("data-plan");
-          Northline.pay(plan === "member" ? config.memberLink : config.operatorLink, plan);
+          Northline.pay(plan);
         });
       });
     });
